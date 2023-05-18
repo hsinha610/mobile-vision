@@ -2,6 +2,8 @@ package com.example.mobilevision
 
 import android.graphics.Bitmap
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.text.method.ScrollingMovementMethod
 import android.view.LayoutInflater
 import android.view.View
@@ -64,24 +66,43 @@ class ImageTextExtractionFragment : Fragment() {
             fab.setOnClickListener {
                 openTextTranslationFragment()
             }
+            tv.addTextChangedListener(object : TextWatcher{
+                override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+                }
+
+                override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+                    val newText = p0?.toString() ?: ""
+
+                    if(newText.isEmpty() || newText.isBlank()){
+                        fab.visibility = View.GONE
+                    } else {
+                        fab.visibility = View.VISIBLE
+                    }
+
+                }
+
+                override fun afterTextChanged(p0: Editable?) {
+                }
+
+            })
         }
     }
 
+    lateinit var textToTranslate: String
+
     private fun openTextTranslationFragment() {
+        textToTranslate = binding.tv.text.toString()
         if(::textToTranslate.isInitialized) {
             vm.openTextTranslationFragment(textToTranslate)
         }
     }
-    lateinit var textToTranslate: String
     private fun recognize() {
         val recognizer = TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS)
         val image = bitmap?.let { InputImage.fromBitmap(it, 90) }
 
         if (image != null) {
             recognizer.process(image).addOnSuccessListener { visionText ->
-                binding.tv.text = visionText.text
-                textToTranslate = visionText.text
-                binding.fab.visibility = View.VISIBLE
+                binding.tv.setText(visionText.text)
                 recognizer.close()
             }
                 .addOnFailureListener {
