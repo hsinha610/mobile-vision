@@ -19,6 +19,7 @@ jobs:
       - name: Set up JDK
         uses: actions/setup-java@v3
         with:
+          distribution: 'corretto'
           java-version: '17'  # Adjust the Java version as needed
 
       - name: Install Ktlint
