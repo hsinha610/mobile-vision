@@ -15,7 +15,7 @@ jobs:
         uses: actions/setup-java@v3
         with:
           distribution: 'corretto'
-          java-version: '1.8'  # Adjust the Java version as needed
+          java-version: '11'  # Adjust the Java version as needed
 
       - name: Build Debug APK
         run: |
